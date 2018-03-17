@@ -10,7 +10,7 @@ public class MinesweeperModel {
 		if(rows <= 0 || columns <= 0 || minesToPlace > rows*columns) {
 			throw new IllegalArgumentException();
 		}
-		mines = minesToPlace;
+		
 		gameLayout = new int[rows][columns];
 		playersViewLayout = new char[rows][columns];
 		for(int i = 0; i < rows; i++) {
@@ -18,7 +18,17 @@ public class MinesweeperModel {
 				playersViewLayout[i][j] = '-';
 			}
 		}
+		
+		mines = minesToPlace;
 		placeMines();
+		
+		for(int r = 0; r < gameLayout.length; r++) {
+			for(int c = 0; c < gameLayout[0].length; c++) {
+				if(gameLayout[r][c] != MINE_IDENTIFIER) {
+					gameLayout[r][c] = identifySurroundingMines(r, c);
+				}
+			}
+		}
 	}
 	
 	private void placeMines() {
@@ -34,4 +44,23 @@ public class MinesweeperModel {
 			}
 		}
 	}
+	
+	private int identifySurroundingMines(int row, int col) {
+		assert(gameLayout[row][col] != MINE_IDENTIFIER);
+		int sum = 0;
+		for(int i = row - 1; i <= row + 1; i++) {
+			for(int j = col - 1; j <= col + 1; j++) {
+				if(inBounds(i, j) && gameLayout[i][j] == MINE_IDENTIFIER) {
+					sum++;
+				}
+			}
+		}
+		return sum;
+	}
+	
+	private boolean inBounds(int row, int col) {
+		return row >= 0 && row < gameLayout.length && col >= 0 && col < gameLayout[0].length;
+	}
+	
+	
 }
