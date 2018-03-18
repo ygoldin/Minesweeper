@@ -238,7 +238,7 @@ public class MinesweeperModel {
 	/**
 	 * tells the client where all of the mines are located
 	 * 
-	 * @return a set of all of the mine locations in the form of [row, column]
+	 * @return an unmodifiable set of all of the mine locations in the form of [row, column]
 	 * @throws IllegalStateException if the game isn't over
 	 */
 	public Set<Integer[]> allMineLocations() {

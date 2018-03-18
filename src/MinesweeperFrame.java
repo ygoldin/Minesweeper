@@ -17,6 +17,9 @@ public class MinesweeperFrame extends JFrame {
 	private static final Color[] GAME_COLORS = {Color.BLUE, Color.WHITE};
 	private static final int[] EASY = {10, 10, 10};
 	
+	/**
+	 * initializes the frame
+	 */
 	public MinesweeperFrame() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(1024, 768));
@@ -43,6 +46,7 @@ public class MinesweeperFrame extends JFrame {
 		setJMenuBar(menu);
 	}
 	
+	//reveals all of the spots in the map and what their danger counts are
 	private void showSeaAroundZeroes(Map<Integer[], Integer> affectedSpots) {
 		for(Integer[] spot : affectedSpots.keySet()) {
 			int dangerCount = affectedSpots.get(spot);
@@ -57,6 +61,7 @@ public class MinesweeperFrame extends JFrame {
 		}
 	}
 	
+	//performs the end of game actions, including resetting the game if necessary
 	private void gameOverActions() {
 		String message;
 		if(minesweeperModel.gameEndedInVictory()) {
@@ -86,14 +91,22 @@ public class MinesweeperFrame extends JFrame {
 		}
 	}
 	
+	//updates the display of the number of flags the user has placed
 	private void setFlagsPlacedText() {
 		flagsPlaced.setText("Flags: " + minesweeperModel.flagsPlaced() + "/" + EASY[2]);
 	}
 	
+	//this class represents one spot on the grid
 	private class GridSpot extends JButton {
 		private static final int FONT_SIZE = 40;
 		private static final String FONT_NAME = "Arial";
 		
+		/**
+		 * constructs a spot representing the row/column location on the grid
+		 * 
+		 * @param row The row value of the spot
+		 * @param col The col value of the spot
+		 */
 		public GridSpot(int row, int col) {
 			setOpaque(true);
 			setRolloverEnabled(false);
