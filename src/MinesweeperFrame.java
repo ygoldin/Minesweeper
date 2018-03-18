@@ -38,12 +38,13 @@ public class MinesweeperFrame extends JFrame {
 		add(buttonPanel);
 		
 		JMenuBar menu = new JMenuBar();
+		setJMenuBar(menu);
 		placeFlag = new JToggleButton("Flag");
+		placeFlag.setIcon(scaledIcon(FLAG_ICON, null, 16)); //TODO: fix random 16
 		menu.add(placeFlag);
 		flagsPlaced = new JLabel();
 		setFlagsPlacedText();
 		menu.add(flagsPlaced);
-		setJMenuBar(menu);
 	}
 	
 	//reveals all of the spots in the map and what their danger counts are
@@ -69,9 +70,7 @@ public class MinesweeperFrame extends JFrame {
 		} else {
 			for(Integer[] spot : minesweeperModel.allMineLocations()) {
 				GridSpot curSpot = gridSpots[spot[0]][spot[1]];
-				Image mine = MINE_ICON.getImage().getScaledInstance(-1, curSpot.getHeight(),
-						Image.SCALE_SMOOTH);
-				curSpot.setIcon(new ImageIcon(mine));
+				curSpot.setIcon(scaledIcon(MINE_ICON, curSpot, -1));
 			}
 			message = "Game Over";
 		}
@@ -89,6 +88,14 @@ public class MinesweeperFrame extends JFrame {
 				}
 			}
 		}
+	}
+	
+	private Icon scaledIcon(ImageIcon icon, JComponent parent, int height) {
+		if(parent != null) {
+			height = parent.getHeight();
+		}
+		Image scaled = icon.getImage().getScaledInstance(-1, height, Image.SCALE_SMOOTH);
+		return new ImageIcon(scaled);
 	}
 	
 	//updates the display of the number of flags the user has placed
@@ -123,9 +130,7 @@ public class MinesweeperFrame extends JFrame {
 								setIcon(null);
 							} else if(minesweeperModel.spotCanBeRevealed(row, col)) {
 								minesweeperModel.flagSpot(row, col);
-								Image flag = FLAG_ICON.getImage().getScaledInstance(-1, getHeight(),
-										Image.SCALE_SMOOTH);
-								setIcon(new ImageIcon(flag));
+								setIcon(scaledIcon(FLAG_ICON, this, -1));
 							}
 						}
 					} else if(minesweeperModel.spotCanBeRevealed(row, col)){
