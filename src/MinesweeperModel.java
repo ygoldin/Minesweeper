@@ -7,11 +7,13 @@ public class MinesweeperModel {
 	private char[][] playersViewLayout;
 	private int mines;
 	private int flagsPlaced;
+	private int uncoveredSpots;
+	private boolean mineClicked;
+	
 	private static final int MINE_IDENTIFIER = -1;
 	private static final char UNCLICKED_IDENTIFIER = '-';
 	private static final char FLAGGED_IDENTIFIER = 'f';
 	public static final double MINE_PERCENT_MAX = 0.5;
-	private static final char UNKNOWN_IDENTIFIER = 0;
 	
 	/**
 	 * initializes the state of the game
@@ -83,13 +85,16 @@ public class MinesweeperModel {
 	 * @param col The column value of the spot
 	 * @return a map from all affected spots by this "click" (in the form [row, col]) to the numbers
 	 * revealed in those spots, or null if this spot was a mine
+	 * @throws IllegalStateException if the game is over
 	 * @throws IllegalArgumentException if the spot is out of bounds or has already been revealed/flagged
 	 */
 	public Map<Integer[], Integer> revealSpot(int row, int col) {
+		exceptionIfGameIsOver();
 		if(!spotCanBeRevealed(row, col)) {
 			throw new IllegalArgumentException("unclickable spot");
 		}
 		if(gameLayout[row][col] == MINE_IDENTIFIER) {
+			mineClicked = true;
 			return null;
 		}
 		
@@ -101,6 +106,7 @@ public class MinesweeperModel {
 	//updates the map with all of the revealed spots around the given one
 	private void revealSeaAroundZeroes(int row, int col, Map<Integer[], Integer> affected) {
 		if(inBounds(row, col) && playersViewLayout[row][col] == UNCLICKED_IDENTIFIER) {
+			uncoveredSpots++;
 			int spotValue = gameLayout[row][col];
 			if(playersViewLayout[row][col] == FLAGGED_IDENTIFIER) {
 				flagsPlaced--;
@@ -125,10 +131,12 @@ public class MinesweeperModel {
 	 * 
 	 * @param row The row of the spot
 	 * @param col The column of the spot
+	 * @throws IllegalStateException if the game is over
 	 * @throws IllegalArgumentException if the spot is out of bounds, already revealed, or already
 	 * flagged
 	 */
 	public void flagSpot(int row, int col) {
+		exceptionIfGameIsOver();
 		if(!spotCanBeRevealed(row, col)) {
 			throw new IllegalArgumentException("spot already revealed");
 		} else if(spotIsFlagged(row, col)) {
@@ -143,14 +151,16 @@ public class MinesweeperModel {
 	 * 
 	 * @param row The row of the spot
 	 * @param col The column of the spot
+	 * @throws IllegalStateException if the game is over
 	 * @throws IllegalArgumentException if the spot is out of bounds or not flagged
 	 */
 	public void unflagSpot(int row, int col) {
+		exceptionIfGameIsOver();
 		if(!spotIsFlagged(row, col)) {
 			throw new IllegalArgumentException("can only unflag spots that are flagged");
 		}
 		flagsPlaced--;
-		playersViewLayout[row][col] = UNKNOWN_IDENTIFIER;
+		playersViewLayout[row][col] = UNCLICKED_IDENTIFIER;
 	}
 	
 	/**
@@ -186,6 +196,26 @@ public class MinesweeperModel {
 		return flagsPlaced;
 	}
 	
+	/**
+	 * @return true if the game is over, false otherwise
+	 */
+	public boolean isGameOver() {
+		return mineClicked || uncoveredSpots == gameLayout.length*gameLayout[0].length - mines;
+	}
+	
+	/**
+	 * checks if the game ended because of a mine being clicked or the user winning
+	 * 
+	 * @return true if the user won, false if a mine was clicked
+	 * @throws IllegalStateException if the game isn't over
+	 */
+	public boolean gameWon() {
+		if(!isGameOver()) {
+			throw new IllegalStateException("game isn't over");
+		}
+		return !mineClicked;
+	}
+	
 	//returns true if the given spot is in bounds of the grid, false otherwise
 	private boolean inBounds(int row, int col) {
 		return row >= 0 && row < gameLayout.length && col >= 0 && col < gameLayout[0].length;
@@ -198,4 +228,10 @@ public class MinesweeperModel {
 		}
 	}
 	
+	//throws an IllegalStateException if the game is over
+	private void exceptionIfGameIsOver() {
+		if(isGameOver()) {
+			throw new IllegalStateException("game is over");
+		}
+	}
 }
