@@ -13,7 +13,8 @@ public class MinesweeperFrame extends JFrame {
 	private JToggleButton placeFlag;
 	private JLabel flagsPlaced;
 	private static final ImageIcon FLAG_ICON = new ImageIcon("flag_icon.png");
-	private static final Color[] GAME_COLORS = {Color.BLUE, Color.WHITE, Color.RED};
+	private static final ImageIcon MINE_ICON = new ImageIcon("mine_icon.png");
+	private static final Color[] GAME_COLORS = {Color.BLUE, Color.WHITE};
 	private static final int[] EASY = {10, 10, 10};
 	
 	public MinesweeperFrame() {
@@ -36,7 +37,8 @@ public class MinesweeperFrame extends JFrame {
 		JMenuBar menu = new JMenuBar();
 		placeFlag = new JToggleButton("Flag");
 		menu.add(placeFlag);
-		flagsPlaced = new JLabel("Flags: 0/" + EASY[2]);
+		flagsPlaced = new JLabel();
+		setFlagsPlacedText();
 		menu.add(flagsPlaced);
 		setJMenuBar(menu);
 	}
@@ -61,10 +63,15 @@ public class MinesweeperFrame extends JFrame {
 		} else {
 			for(Integer[] spot : minesweeperModel.allMineLocations()) {
 				GridSpot curSpot = gridSpots[spot[0]][spot[1]];
-				curSpot.setText("X");
-				curSpot.setForeground(GAME_COLORS[2]);
+				Image mine = MINE_ICON.getImage().getScaledInstance(-1, curSpot.getHeight(),
+						Image.SCALE_SMOOTH);
+				curSpot.setIcon(new ImageIcon(mine));
 			}
 		}
+	}
+	
+	private void setFlagsPlacedText() {
+		flagsPlaced.setText("Flags: " + minesweeperModel.flagsPlaced() + "/" + EASY[2]);
 	}
 	
 	private class GridSpot extends JButton {
@@ -101,7 +108,7 @@ public class MinesweeperFrame extends JFrame {
 							MinesweeperFrame.this.showSeaAroundZeroes(affectedSpots);
 						}
 					}
-					flagsPlaced.setText("Flags: " + minesweeperModel.flagsPlaced() + "/" + EASY[2]);
+					setFlagsPlacedText();
 				}
 			});
 		}
