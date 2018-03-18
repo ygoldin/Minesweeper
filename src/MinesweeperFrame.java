@@ -102,10 +102,13 @@ public class MinesweeperFrame extends JFrame {
 					} else if(minesweeperModel.spotCanBeRevealed(row, col)){
 						//setEnabled(false); TODO it's changing the font color
 						Map<Integer[], Integer> affectedSpots = minesweeperModel.revealSpot(row, col);
-						if(affectedSpots == null || minesweeperModel.isGameOver()) {
-							MinesweeperFrame.this.gameOverActions();
+						if(affectedSpots == null) {
+							gameOverActions();
 						} else {
-							MinesweeperFrame.this.showSeaAroundZeroes(affectedSpots);
+							showSeaAroundZeroes(affectedSpots);
+							if(minesweeperModel.isGameOver()) {
+								gameOverActions();
+							}
 						}
 					}
 					setFlagsPlacedText();
