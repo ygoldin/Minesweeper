@@ -138,10 +138,9 @@ public class MinesweeperModel {
 	public void flagSpot(int row, int col) {
 		exceptionIfGameIsOver();
 		if(!spotCanBeRevealed(row, col)) {
-			throw new IllegalArgumentException("spot already revealed");
-		} else if(spotIsFlagged(row, col)) {
-			throw new IllegalArgumentException("spot already flagged");
+			throw new IllegalArgumentException("spot already revealed or flagged");
 		}
+		assert(!spotIsFlagged(row, col)) : "can only be revealed if not flagged";
 		flagsPlaced++;
 		playersViewLayout[row][col] = FLAGGED_IDENTIFIER;
 	}
