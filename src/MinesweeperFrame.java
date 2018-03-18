@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.*;
 
@@ -11,7 +12,7 @@ import javax.swing.*;
 public class MinesweeperFrame extends JFrame {
 	private MinesweeperModel minesweeperModel;
 	private GridSpot[][] gridSpots;
-	private static final Color[] GAME_COLORS = {Color.CYAN, Color.BLUE, Color.WHITE};
+	private static final Color[] GAME_COLORS = {Color.CYAN, Color.BLUE, Color.WHITE, Color.RED};
 	private static final int[] EASY = {10, 10, 10};
 	
 	public MinesweeperFrame() {
@@ -45,7 +46,15 @@ public class MinesweeperFrame extends JFrame {
 	}
 	
 	private void gameOverActions() {
-		
+		if(minesweeperModel.gameEndedInVictory()) {
+			//victory message
+		} else {
+			for(Integer[] spot : minesweeperModel.allMineLocations()) {
+				GridSpot curSpot = gridSpots[spot[0]][spot[1]];
+				curSpot.setText("X");
+				curSpot.setForeground(GAME_COLORS[3]);
+			}
+		}
 	}
 	
 	private class GridSpot extends JButton {
@@ -63,7 +72,7 @@ public class MinesweeperFrame extends JFrame {
 				if(!minesweeperModel.isGameOver()) {
 					setEnabled(false);
 					Map<Integer[], Integer> affectedSpots = minesweeperModel.revealSpot(row, col);
-					if(affectedSpots == null) {
+					if(affectedSpots == null || minesweeperModel.isGameOver()) {
 						MinesweeperFrame.this.gameOverActions();
 					} else {
 						MinesweeperFrame.this.showSeaAroundZeroes(affectedSpots);

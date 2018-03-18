@@ -1,6 +1,9 @@
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 /**
  * MinesweeperModel can be used to model a game of Minesweeper
@@ -13,6 +16,7 @@ public class MinesweeperModel {
 	private int flagsPlaced;
 	private int uncoveredSpots;
 	private boolean mineClicked;
+	private Set<Integer[]> mineLocations;
 	
 	private static final int MINE_IDENTIFIER = -1;
 	private static final char UNCLICKED_IDENTIFIER = '-';
@@ -55,6 +59,7 @@ public class MinesweeperModel {
 	
 	//randomly places the mines on the grid
 	private void placeMines() {
+		mineLocations = new HashSet<>();
 		Random randomMinePlacer = new Random();
 		int minesPlaced = 0;
 		while(minesPlaced < mines){
@@ -63,6 +68,7 @@ public class MinesweeperModel {
 			//ensures two mines aren't placed in the same spot
 			if(gameLayout[mineRow][mineCol] != MINE_IDENTIFIER){
 				gameLayout[mineRow][mineCol] = MINE_IDENTIFIER;
+				mineLocations.add(new Integer[]{mineRow, mineCol});
 				minesPlaced++;
 			}
 		}
@@ -225,16 +231,32 @@ public class MinesweeperModel {
 	 * @throws IllegalStateException if the game isn't over
 	 */
 	public boolean gameEndedInVictory() {
-		if(!isGameOver()) {
-			throw new IllegalStateException("game isn't over");
-		}
+		exceptionIfGameNotOver();
 		return !mineClicked;
+	}
+	
+	/**
+	 * tells the client where all of the mines are located
+	 * 
+	 * @return a set of all of the mine locations in the form of [row, column]
+	 * @throws IllegalStateException if the game isn't over
+	 */
+	public Set<Integer[]> allMineLocations() {
+		exceptionIfGameNotOver();
+		return Collections.unmodifiableSet(mineLocations);
 	}
 	
 	//throws an IllegalStateException if the game is over
 	private void exceptionIfGameIsOver() {
 		if(isGameOver()) {
 			throw new IllegalStateException("game is over");
+		}
+	}
+	
+	//throws an IllegalStateException if the game is over
+	private void exceptionIfGameNotOver() {
+		if(!isGameOver()) {
+			throw new IllegalStateException("game isn't over");
 		}
 	}
 }
