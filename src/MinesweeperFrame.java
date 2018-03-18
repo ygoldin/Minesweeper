@@ -10,6 +10,8 @@ import javax.swing.*;
 public class MinesweeperFrame extends JFrame {
 	private MinesweeperModel minesweeperModel;
 	private GridSpot[][] gridSpots;
+	private JToggleButton placeFlag;
+	private JLabel flagsPlaced;
 	private static final Color[] GAME_COLORS = {Color.CYAN, Color.BLUE, Color.WHITE, Color.RED};
 	private static final int[] EASY = {10, 10, 10};
 	
@@ -29,13 +31,22 @@ public class MinesweeperFrame extends JFrame {
 			}
 		}
 		add(buttonPanel);
+		
+		JMenuBar menu = new JMenuBar();
+		placeFlag = new JToggleButton("Flag");
+		menu.add(placeFlag);
+		flagsPlaced = new JLabel("Flags: 0/" + EASY[2]);
+		menu.add(flagsPlaced);
+		setJMenuBar(menu);
 	}
 	
 	private void showSeaAroundZeroes(Map<Integer[], Integer> affectedSpots) {
 		for(Integer[] spot : affectedSpots.keySet()) {
 			int dangerCount = affectedSpots.get(spot);
 			GridSpot curSpot = gridSpots[spot[0]][spot[1]];
-			if(dangerCount != 0) {
+			if(dangerCount == 0) {
+				curSpot.setText("");
+			} else {
 				curSpot.setText("" + dangerCount);
 			}
 			curSpot.setBackground(GAME_COLORS[1]);
@@ -69,13 +80,24 @@ public class MinesweeperFrame extends JFrame {
 			
 			addActionListener(e -> {
 				if(!minesweeperModel.isGameOver()) {
-					//setEnabled(false); TODO it's changing the font color
-					Map<Integer[], Integer> affectedSpots = minesweeperModel.revealSpot(row, col);
-					if(affectedSpots == null || minesweeperModel.isGameOver()) {
-						MinesweeperFrame.this.gameOverActions();
-					} else {
-						MinesweeperFrame.this.showSeaAroundZeroes(affectedSpots);
+					if(placeFlag.isSelected()) {
+						if(minesweeperModel.spotIsFlagged(row, col)) {
+							minesweeperModel.unflagSpot(row, col);
+							setText("");
+						} else if(minesweeperModel.spotCanBeRevealed(row, col)) {
+							minesweeperModel.flagSpot(row, col);
+							setText("F");
+						}
+					} else if(minesweeperModel.spotCanBeRevealed(row, col)){
+						//setEnabled(false); TODO it's changing the font color
+						Map<Integer[], Integer> affectedSpots = minesweeperModel.revealSpot(row, col);
+						if(affectedSpots == null || minesweeperModel.isGameOver()) {
+							MinesweeperFrame.this.gameOverActions();
+						} else {
+							MinesweeperFrame.this.showSeaAroundZeroes(affectedSpots);
+						}
 					}
+					flagsPlaced.setText("Flags: " + minesweeperModel.flagsPlaced() + "/" + EASY[2]);
 				}
 			});
 		}
