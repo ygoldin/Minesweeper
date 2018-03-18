@@ -1,4 +1,6 @@
 import java.awt.*;
+import java.util.Map;
+
 import javax.swing.*;
 
 /**
@@ -30,16 +32,40 @@ public class MinesweeperFrame extends JFrame {
 		add(buttonPanel);
 	}
 	
-	private class GridSpot extends JButton {
-		private final int row;
-		private final int col;
+	private void showSeaAroundZeroes(Map<Integer[], Integer> affectedSpots) {
+		for(Integer[] spot : affectedSpots.keySet()) {
+			int dangerCount = affectedSpots.get(spot);
+			GridSpot curSpot = gridSpots[spot[0]][spot[1]];
+			if(dangerCount != 0) {
+				curSpot.setText("" + dangerCount);
+			}
+			curSpot.setBackground(GAME_COLORS[1]);
+			curSpot.setEnabled(false);
+		}
+	}
+	
+	private void gameOverActions() {
 		
+	}
+	
+	private class GridSpot extends JButton {
 		public GridSpot(int row, int col) {
-			this.row = row;
-			this.col = col;
 			setBackground(GAME_COLORS[0]);
 			setOpaque(true);
 			setRolloverEnabled(false);
+			setForeground(GAME_COLORS[2]);
+			
+			addActionListener(e -> {
+				if(!minesweeperModel.isGameOver()) {
+					setEnabled(false);
+					Map<Integer[], Integer> affectedSpots = minesweeperModel.revealSpot(row, col);
+					if(affectedSpots == null) {
+						MinesweeperFrame.this.gameOverActions();
+					} else {
+						MinesweeperFrame.this.showSeaAroundZeroes(affectedSpots);
+					}
+				}
+			});
 		}
 	}
 }
