@@ -1,8 +1,6 @@
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 public class MinesweeperModel {
 	private int[][] gameLayout;
@@ -13,6 +11,7 @@ public class MinesweeperModel {
 	private static final char UNCLICKED_IDENTIFIER = '-';
 	private static final char FLAGGED_IDENTIFIER = 'f';
 	public static final double MINE_PERCENT_MAX = 0.5;
+	private static final char UNKNOWN_IDENTIFIER = 0;
 	
 	/**
 	 * initializes the state of the game
@@ -99,9 +98,13 @@ public class MinesweeperModel {
 		return affected;
 	}
 	
+	//updates the map with all of the revealed spots around the given one
 	private void revealSeaAroundZeroes(int row, int col, Map<Integer[], Integer> affected) {
 		if(inBounds(row, col) && playersViewLayout[row][col] == UNCLICKED_IDENTIFIER) {
 			int spotValue = gameLayout[row][col];
+			if(playersViewLayout[row][col] == FLAGGED_IDENTIFIER) {
+				flagsPlaced--;
+			}
 			playersViewLayout[row][col] = (char) (spotValue - '0');
 			affected.put(new Integer[]{row, col}, spotValue);
 			
@@ -117,11 +120,70 @@ public class MinesweeperModel {
 		}
 	}
 	
-	public boolean spotCanBeRevealed(int row, int col) {
-		if(!inBounds(row, col)) {
-			throw new IllegalArgumentException("not in bounds");
+	/**
+	 * flags the given spot
+	 * 
+	 * @param row The row of the spot
+	 * @param col The column of the spot
+	 * @throws IllegalArgumentException if the spot is out of bounds, already revealed, or already
+	 * flagged
+	 */
+	public void flagSpot(int row, int col) {
+		if(!spotCanBeRevealed(row, col)) {
+			throw new IllegalArgumentException("spot already revealed");
+		} else if(spotIsFlagged(row, col)) {
+			throw new IllegalArgumentException("spot already flagged");
 		}
+		flagsPlaced++;
+		playersViewLayout[row][col] = FLAGGED_IDENTIFIER;
+	}
+	
+	/**
+	 * flags the given spot
+	 * 
+	 * @param row The row of the spot
+	 * @param col The column of the spot
+	 * @throws IllegalArgumentException if the spot is out of bounds or not flagged
+	 */
+	public void unflagSpot(int row, int col) {
+		if(!spotIsFlagged(row, col)) {
+			throw new IllegalArgumentException("can only unflag spots that are flagged");
+		}
+		flagsPlaced--;
+		playersViewLayout[row][col] = UNKNOWN_IDENTIFIER;
+	}
+	
+	/**
+	 * checks if the spot can be uncovered
+	 * 
+	 * @param row The row of the spot
+	 * @param col The column of the spot
+	 * @return true if the spot can be uncovered, false otherwise
+	 * @throws IllegalArgumentException if the spot is out of bounds
+	 */
+	public boolean spotCanBeRevealed(int row, int col) {
+		exceptionIfOutOfBounds(row, col);
 		return playersViewLayout[row][col] == UNCLICKED_IDENTIFIER;
+	}
+	
+	/**
+	 * checks if the spot is flagged
+	 * 
+	 * @param row The row of the spot
+	 * @param col The column of the spot
+	 * @return true if the spot is flagged, false otherwise
+	 * @throws IllegalArgumentException if the spot is out of bounds
+	 */
+	public boolean spotIsFlagged(int row, int col) {
+		exceptionIfOutOfBounds(row, col);
+		return playersViewLayout[row][col] == FLAGGED_IDENTIFIER;
+	}
+	
+	/**
+	 * @return how many flags are placed
+	 */
+	public int flagsPlaced() {
+		return flagsPlaced;
 	}
 	
 	//returns true if the given spot is in bounds of the grid, false otherwise
@@ -129,5 +191,11 @@ public class MinesweeperModel {
 		return row >= 0 && row < gameLayout.length && col >= 0 && col < gameLayout[0].length;
 	}
 	
+	//throws an IllegalArgumentException if the spot is out of bounds
+	private void exceptionIfOutOfBounds(int row, int col) {
+		if(!inBounds(row, col)) {
+			throw new IllegalArgumentException("not in bounds");
+		}
+	}
 	
 }
