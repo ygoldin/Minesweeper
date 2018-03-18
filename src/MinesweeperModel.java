@@ -2,6 +2,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * MinesweeperModel can be used to model a game of Minesweeper
+ * @author Yael Goldin
+ */
 public class MinesweeperModel {
 	private int[][] gameLayout;
 	private char[][] playersViewLayout;
