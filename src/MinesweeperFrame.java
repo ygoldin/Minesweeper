@@ -1,7 +1,5 @@
 import java.awt.*;
 import java.util.Map;
-import java.util.Set;
-
 import javax.swing.*;
 
 /**
@@ -41,13 +39,13 @@ public class MinesweeperFrame extends JFrame {
 				curSpot.setText("" + dangerCount);
 			}
 			curSpot.setBackground(GAME_COLORS[1]);
-			curSpot.setEnabled(false);
+			//curSpot.setEnabled(false); TODO
 		}
 	}
 	
 	private void gameOverActions() {
 		if(minesweeperModel.gameEndedInVictory()) {
-			//victory message
+			//TODO victory message
 		} else {
 			for(Integer[] spot : minesweeperModel.allMineLocations()) {
 				GridSpot curSpot = gridSpots[spot[0]][spot[1]];
@@ -68,9 +66,10 @@ public class MinesweeperFrame extends JFrame {
 			setForeground(GAME_COLORS[2]);
 			setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
 			
+			
 			addActionListener(e -> {
 				if(!minesweeperModel.isGameOver()) {
-					setEnabled(false);
+					//setEnabled(false); TODO it's changing the font color
 					Map<Integer[], Integer> affectedSpots = minesweeperModel.revealSpot(row, col);
 					if(affectedSpots == null || minesweeperModel.isGameOver()) {
 						MinesweeperFrame.this.gameOverActions();
