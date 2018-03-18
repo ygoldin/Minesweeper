@@ -189,6 +189,18 @@ public class MinesweeperModel {
 		return playersViewLayout[row][col] == FLAGGED_IDENTIFIER;
 	}
 	
+	//returns true if the given spot is in bounds of the grid, false otherwise
+	private boolean inBounds(int row, int col) {
+		return row >= 0 && row < gameLayout.length && col >= 0 && col < gameLayout[0].length;
+	}
+	
+	//throws an IllegalArgumentException if the spot is out of bounds
+	private void exceptionIfOutOfBounds(int row, int col) {
+		if(!inBounds(row, col)) {
+			throw new IllegalArgumentException("not in bounds");
+		}
+	}
+	
 	/**
 	 * @return how many flags are placed
 	 */
@@ -209,23 +221,11 @@ public class MinesweeperModel {
 	 * @return true if the user won, false if a mine was clicked
 	 * @throws IllegalStateException if the game isn't over
 	 */
-	public boolean gameWon() {
+	public boolean gameEndedInVictory() {
 		if(!isGameOver()) {
 			throw new IllegalStateException("game isn't over");
 		}
 		return !mineClicked;
-	}
-	
-	//returns true if the given spot is in bounds of the grid, false otherwise
-	private boolean inBounds(int row, int col) {
-		return row >= 0 && row < gameLayout.length && col >= 0 && col < gameLayout[0].length;
-	}
-	
-	//throws an IllegalArgumentException if the spot is out of bounds
-	private void exceptionIfOutOfBounds(int row, int col) {
-		if(!inBounds(row, col)) {
-			throw new IllegalArgumentException("not in bounds");
-		}
 	}
 	
 	//throws an IllegalStateException if the game is over
