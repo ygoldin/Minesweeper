@@ -75,7 +75,6 @@ public class MinesweeperFrame extends JFrame {
 				== JOptionPane.YES_OPTION) { //play again
 			minesweeperModel = new MinesweeperModel(EASY[0], EASY[1], EASY[2]);
 			setFlagsPlacedText();
-			placeFlag = new JToggleButton("Flag");
 			for(int r = 0; r < gridSpots.length; r++) {
 				for(int c = 0; c < gridSpots[0].length; c++) {
 					GridSpot cur = gridSpots[r][c];
