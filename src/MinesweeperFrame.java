@@ -49,11 +49,15 @@ public class MinesweeperFrame extends JFrame {
 	}
 	
 	private class GridSpot extends JButton {
+		private static final int FONT_SIZE = 40;
+		private static final String FONT_NAME = "Arial";
+		
 		public GridSpot(int row, int col) {
 			setBackground(GAME_COLORS[0]);
 			setOpaque(true);
 			setRolloverEnabled(false);
 			setForeground(GAME_COLORS[2]);
+			setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
 			
 			addActionListener(e -> {
 				if(!minesweeperModel.isGameOver()) {
