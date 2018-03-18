@@ -58,14 +58,31 @@ public class MinesweeperFrame extends JFrame {
 	}
 	
 	private void gameOverActions() {
+		String message;
 		if(minesweeperModel.gameEndedInVictory()) {
-			//TODO victory message
+			message = "Victory!";
 		} else {
 			for(Integer[] spot : minesweeperModel.allMineLocations()) {
 				GridSpot curSpot = gridSpots[spot[0]][spot[1]];
 				Image mine = MINE_ICON.getImage().getScaledInstance(-1, curSpot.getHeight(),
 						Image.SCALE_SMOOTH);
 				curSpot.setIcon(new ImageIcon(mine));
+			}
+			message = "Game Over";
+		}
+		
+		if(JOptionPane.showConfirmDialog(this, message, "Play again?", JOptionPane.YES_NO_OPTION)
+				== JOptionPane.YES_OPTION) { //play again
+			minesweeperModel = new MinesweeperModel(EASY[0], EASY[1], EASY[2]);
+			setFlagsPlacedText();
+			placeFlag = new JToggleButton("Flag");
+			for(int r = 0; r < gridSpots.length; r++) {
+				for(int c = 0; c < gridSpots[0].length; c++) {
+					GridSpot cur = gridSpots[r][c];
+					cur.setIcon(null);
+					cur.setText("");
+					cur.setBackground(null);
+				}
 			}
 		}
 	}
