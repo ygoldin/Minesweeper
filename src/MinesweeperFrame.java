@@ -12,7 +12,8 @@ public class MinesweeperFrame extends JFrame {
 	private GridSpot[][] gridSpots;
 	private JToggleButton placeFlag;
 	private JLabel flagsPlaced;
-	private static final Color[] GAME_COLORS = {Color.CYAN, Color.BLUE, Color.WHITE, Color.RED};
+	private static final ImageIcon FLAG_ICON = new ImageIcon("flag_icon.png");
+	private static final Color[] GAME_COLORS = {Color.BLUE, Color.WHITE, Color.RED};
 	private static final int[] EASY = {10, 10, 10};
 	
 	public MinesweeperFrame() {
@@ -49,7 +50,7 @@ public class MinesweeperFrame extends JFrame {
 			} else {
 				curSpot.setText("" + dangerCount);
 			}
-			curSpot.setBackground(GAME_COLORS[1]);
+			curSpot.setBackground(GAME_COLORS[0]);
 			//curSpot.setEnabled(false); TODO
 		}
 	}
@@ -61,7 +62,7 @@ public class MinesweeperFrame extends JFrame {
 			for(Integer[] spot : minesweeperModel.allMineLocations()) {
 				GridSpot curSpot = gridSpots[spot[0]][spot[1]];
 				curSpot.setText("X");
-				curSpot.setForeground(GAME_COLORS[3]);
+				curSpot.setForeground(GAME_COLORS[2]);
 			}
 		}
 	}
@@ -71,22 +72,25 @@ public class MinesweeperFrame extends JFrame {
 		private static final String FONT_NAME = "Arial";
 		
 		public GridSpot(int row, int col) {
-			setBackground(GAME_COLORS[0]);
 			setOpaque(true);
 			setRolloverEnabled(false);
-			setForeground(GAME_COLORS[2]);
+			setForeground(GAME_COLORS[1]);
 			setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
 			
 			
 			addActionListener(e -> {
 				if(!minesweeperModel.isGameOver()) {
 					if(placeFlag.isSelected()) {
-						if(minesweeperModel.spotIsFlagged(row, col)) {
-							minesweeperModel.unflagSpot(row, col);
-							setText("");
-						} else if(minesweeperModel.spotCanBeRevealed(row, col)) {
-							minesweeperModel.flagSpot(row, col);
-							setText("F");
+						if(minesweeperModel.flagsPlaced() < EASY[2]) {
+							if(minesweeperModel.spotIsFlagged(row, col)) {
+								minesweeperModel.unflagSpot(row, col);
+								setIcon(null);
+							} else if(minesweeperModel.spotCanBeRevealed(row, col)) {
+								minesweeperModel.flagSpot(row, col);
+								Image flag = FLAG_ICON.getImage().getScaledInstance(-1, getHeight(),
+										Image.SCALE_SMOOTH);
+								setIcon(new ImageIcon(flag));
+							}
 						}
 					} else if(minesweeperModel.spotCanBeRevealed(row, col)){
 						//setEnabled(false); TODO it's changing the font color
