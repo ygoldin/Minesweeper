@@ -58,7 +58,7 @@ public class MinesweeperFrame extends JFrame {
 			message += "If it's off, clicking on a square will reveal it\n";
 			message += "If it's on, clicking on a square will flag it, making it impossible to reveal\n";
 			message += "If a square is already flagged, it will instead unflag it";
-			JOptionPane.showMessageDialog(this, message);
+			JOptionPane.showMessageDialog(this, message, "Game Rules", JOptionPane.INFORMATION_MESSAGE);
 		});
 	}
 	
