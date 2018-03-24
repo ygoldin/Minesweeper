@@ -10,7 +10,7 @@ import javax.swing.*;
 public class MinesweeperFrame extends JFrame {
 	private MinesweeperModel minesweeperModel;
 	private GridSpot[][] gridSpots;
-	private JToggleButton placeFlag;
+	private FlagToggle placeFlag;
 	private JLabel flagsPlaced;
 	private JButton help;
 	private int difficulty;
@@ -41,8 +41,7 @@ public class MinesweeperFrame extends JFrame {
 		
 		JMenuBar menu = new JMenuBar();
 		setJMenuBar(menu);
-		placeFlag = new JToggleButton("Flag");
-		placeFlag.setIcon(scaledIcon(FLAG_ICON, null, 16)); //TODO: fix random 16
+		placeFlag = new FlagToggle("Flag");
 		menu.add(placeFlag);
 		menu.add(Box.createHorizontalGlue());
 		
@@ -121,6 +120,40 @@ public class MinesweeperFrame extends JFrame {
 				DIFFICULTIES[difficulty][2]);
 	}
 	
+	//this class represents the toggle button for flagging
+	private class FlagToggle extends JButton {
+		private boolean toggled;
+		private final Color TOGGLED_COLOR = Color.GREEN;
+		private final int ICON_HEIGHT = 16;
+		
+		/**
+		 * initializes the button with the given text
+		 * 
+		 * @param text The text to put in the button
+		 */
+		public FlagToggle(String text) {
+			super(text);
+			setIcon(scaledIcon(FLAG_ICON, null, ICON_HEIGHT)); //TODO: fix random 16
+			addActionListener(e -> {
+				toggled = !toggled;
+				if(toggled) {
+					setBackground(TOGGLED_COLOR);
+				} else {
+					setBackground(null);
+				}
+			});
+		}
+		
+		/**
+		 * checks if the toggling mode is active
+		 * 
+		 * @return true if the button is toggled, false otherwise
+		 */
+		public boolean isToggled() {
+			return toggled;
+		}
+	}
+	
 	//this class represents one spot on the grid
 	private class GridSpot extends JButton {
 		private static final int FONT_SIZE = 40;
@@ -140,7 +173,7 @@ public class MinesweeperFrame extends JFrame {
 			
 			addActionListener(e -> {
 				if(!minesweeperModel.isGameOver()) {
-					if(placeFlag.isSelected()) {
+					if(placeFlag.isToggled()) {
 						if(minesweeperModel.flagsPlaced() < DIFFICULTIES[difficulty][2]) {
 							if(minesweeperModel.spotIsFlagged(row, col)) {
 								minesweeperModel.unflagSpot(row, col);
