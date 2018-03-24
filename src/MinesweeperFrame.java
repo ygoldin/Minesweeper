@@ -92,6 +92,7 @@ public class MinesweeperFrame extends JFrame {
 		}
 	}
 	
+	//returns a scaled version of the icon based on the parent and desired height
 	private Icon scaledIcon(ImageIcon icon, JComponent parent, int height) {
 		if(parent != null) {
 			height = parent.getHeight();
@@ -122,7 +123,6 @@ public class MinesweeperFrame extends JFrame {
 			setRolloverEnabled(false);
 			setForeground(GAME_COLORS[1]);
 			setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
-			
 			
 			addActionListener(e -> {
 				if(!minesweeperModel.isGameOver()) {
