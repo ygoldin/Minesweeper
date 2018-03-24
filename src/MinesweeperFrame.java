@@ -12,10 +12,11 @@ public class MinesweeperFrame extends JFrame {
 	private GridSpot[][] gridSpots;
 	private JToggleButton placeFlag;
 	private JLabel flagsPlaced;
+	private int difficulty;
 	private static final ImageIcon FLAG_ICON = new ImageIcon("flag_icon.png");
 	private static final ImageIcon MINE_ICON = new ImageIcon("mine_icon.png");
 	private static final Color[] GAME_COLORS = {Color.BLUE, Color.WHITE};
-	private static final int[] EASY = {10, 10, 10};
+	private static final int[][] DIFFICULTIES = {{10, 10, 10}, {16, 16, 40}, {30, 16, 99}};
 	
 	/**
 	 * initializes the frame
@@ -24,9 +25,9 @@ public class MinesweeperFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(1024, 768));
 		setTitle("Minesweeper");
-		minesweeperModel = new MinesweeperModel(EASY[0], EASY[1], EASY[2]);
-		
-		gridSpots = new GridSpot[EASY[0]][EASY[1]];
+		minesweeperModel = new MinesweeperModel(DIFFICULTIES[difficulty][0], DIFFICULTIES[difficulty][1],
+				DIFFICULTIES[difficulty][2]);
+		gridSpots = new GridSpot[DIFFICULTIES[difficulty][0]][DIFFICULTIES[difficulty][1]];
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(gridSpots.length, gridSpots[0].length));
 		for(int r = 0; r < gridSpots.length; r++) {
@@ -77,7 +78,8 @@ public class MinesweeperFrame extends JFrame {
 		
 		if(JOptionPane.showConfirmDialog(this, message, "Play again?", JOptionPane.YES_NO_OPTION)
 				== JOptionPane.YES_OPTION) { //play again
-			minesweeperModel = new MinesweeperModel(EASY[0], EASY[1], EASY[2]);
+			minesweeperModel = new MinesweeperModel(DIFFICULTIES[difficulty][0],
+					DIFFICULTIES[difficulty][1], DIFFICULTIES[difficulty][2]);
 			setFlagsPlacedText();
 			for(int r = 0; r < gridSpots.length; r++) {
 				for(int c = 0; c < gridSpots[0].length; c++) {
@@ -100,7 +102,8 @@ public class MinesweeperFrame extends JFrame {
 	
 	//updates the display of the number of flags the user has placed
 	private void setFlagsPlacedText() {
-		flagsPlaced.setText("Flags: " + minesweeperModel.flagsPlaced() + "/" + EASY[2]);
+		flagsPlaced.setText("Flags: " + minesweeperModel.flagsPlaced() + "/" +
+				DIFFICULTIES[difficulty][2]);
 	}
 	
 	//this class represents one spot on the grid
@@ -124,7 +127,7 @@ public class MinesweeperFrame extends JFrame {
 			addActionListener(e -> {
 				if(!minesweeperModel.isGameOver()) {
 					if(placeFlag.isSelected()) {
-						if(minesweeperModel.flagsPlaced() < EASY[2]) {
+						if(minesweeperModel.flagsPlaced() < DIFFICULTIES[difficulty][2]) {
 							if(minesweeperModel.spotIsFlagged(row, col)) {
 								minesweeperModel.unflagSpot(row, col);
 								setIcon(null);
