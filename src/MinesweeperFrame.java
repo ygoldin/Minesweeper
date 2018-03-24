@@ -14,8 +14,8 @@ public class MinesweeperFrame extends JFrame {
 	private JLabel flagsPlaced;
 	private JButton help;
 	private int difficulty;
-	private static final ImageIcon FLAG_ICON = new ImageIcon("flag_icon.png");
-	private static final ImageIcon MINE_ICON = new ImageIcon("mine_icon.png");
+	private final ImageIcon FLAG_ICON;
+	private final ImageIcon MINE_ICON;
 	private static final Color[] GAME_COLORS = {Color.BLUE, Color.WHITE};
 	private static final int[][] DIFFICULTIES = {{10, 10, 10}, {16, 16, 40}, {30, 16, 99}};
 	
@@ -23,6 +23,8 @@ public class MinesweeperFrame extends JFrame {
 	 * initializes the frame
 	 */
 	public MinesweeperFrame() {
+		FLAG_ICON = new ImageIcon(getClass().getResource("/images/flag_icon.png"));
+		MINE_ICON = new ImageIcon(getClass().getResource("/images/mine_icon.png"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(1024, 768));
 		setTitle("Minesweeper");
