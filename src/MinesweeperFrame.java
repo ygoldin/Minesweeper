@@ -12,6 +12,7 @@ public class MinesweeperFrame extends JFrame {
 	private GridSpot[][] gridSpots;
 	private JToggleButton placeFlag;
 	private JLabel flagsPlaced;
+	private JButton help;
 	private int difficulty;
 	private static final ImageIcon FLAG_ICON = new ImageIcon("flag_icon.png");
 	private static final ImageIcon MINE_ICON = new ImageIcon("mine_icon.png");
@@ -43,9 +44,22 @@ public class MinesweeperFrame extends JFrame {
 		placeFlag = new JToggleButton("Flag");
 		placeFlag.setIcon(scaledIcon(FLAG_ICON, null, 16)); //TODO: fix random 16
 		menu.add(placeFlag);
+		menu.add(Box.createHorizontalGlue());
+		
 		flagsPlaced = new JLabel();
 		setFlagsPlacedText();
 		menu.add(flagsPlaced);
+		menu.add(Box.createHorizontalGlue());
+		
+		help = new JButton("Help");
+		menu.add(help);
+		help.addActionListener(e -> {
+			String message = "Click on the flag button to toggle the flagging ability on/off\n";
+			message += "If it's off, clicking on a square will reveal it\n";
+			message += "If it's on, clicking on a square will flag it, making it impossible to reveal\n";
+			message += "If a square is already flagged, it will instead unflag it";
+			JOptionPane.showMessageDialog(this, message);
+		});
 	}
 	
 	//reveals all of the spots in the map and what their danger counts are
