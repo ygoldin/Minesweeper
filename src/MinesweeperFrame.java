@@ -17,7 +17,7 @@ public class MinesweeperFrame extends JFrame {
 	private final ImageIcon FLAG_ICON;
 	private final ImageIcon MINE_ICON;
 	private static final Color[] GAME_COLORS = {Color.BLUE, Color.WHITE};
-	private static final int[][] DIFFICULTIES = {{10, 10, 10}, {16, 16, 40}, {30, 16, 99}};
+	private static final int[][] DIFFICULTY_VALUES = {{10, 10, 10}, {16, 16, 40}, {30, 16, 99}};
 	
 	/**
 	 * initializes the frame
@@ -28,9 +28,10 @@ public class MinesweeperFrame extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(1024, 768));
 		setTitle("Minesweeper");
-		minesweeperModel = new MinesweeperModel(DIFFICULTIES[difficulty][0], DIFFICULTIES[difficulty][1],
-				DIFFICULTIES[difficulty][2]);
-		gridSpots = new GridSpot[DIFFICULTIES[difficulty][0]][DIFFICULTIES[difficulty][1]];
+		minesweeperModel = new MinesweeperModel(DIFFICULTY_VALUES[difficulty][0],
+				DIFFICULTY_VALUES[difficulty][1], DIFFICULTY_VALUES[difficulty][2]);
+		
+		gridSpots = new GridSpot[DIFFICULTY_VALUES[difficulty][0]][DIFFICULTY_VALUES[difficulty][1]];
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(gridSpots.length, gridSpots[0].length));
 		for(int r = 0; r < gridSpots.length; r++) {
@@ -40,7 +41,11 @@ public class MinesweeperFrame extends JFrame {
 			}
 		}
 		add(buttonPanel);
-		
+		setupMenu();		
+	}
+	
+	//sets up the menu bar with the flag button, flag tally, and help button
+	private void setupMenu() {
 		JMenuBar menu = new JMenuBar();
 		setJMenuBar(menu);
 		placeFlag = new FlagToggle("Flag");
@@ -74,7 +79,6 @@ public class MinesweeperFrame extends JFrame {
 				curSpot.setText("" + dangerCount);
 			}
 			curSpot.setBackground(GAME_COLORS[0]);
-			//curSpot.setEnabled(false); TODO
 		}
 	}
 	
@@ -93,8 +97,8 @@ public class MinesweeperFrame extends JFrame {
 		
 		if(JOptionPane.showConfirmDialog(this, message, "Play again?", JOptionPane.YES_NO_OPTION)
 				== JOptionPane.YES_OPTION) { //play again
-			minesweeperModel = new MinesweeperModel(DIFFICULTIES[difficulty][0],
-					DIFFICULTIES[difficulty][1], DIFFICULTIES[difficulty][2]);
+			minesweeperModel = new MinesweeperModel(DIFFICULTY_VALUES[difficulty][0],
+					DIFFICULTY_VALUES[difficulty][1], DIFFICULTY_VALUES[difficulty][2]);
 			setFlagsPlacedText();
 			for(int r = 0; r < gridSpots.length; r++) {
 				for(int c = 0; c < gridSpots[0].length; c++) {
@@ -119,14 +123,14 @@ public class MinesweeperFrame extends JFrame {
 	//updates the display of the number of flags the user has placed
 	private void setFlagsPlacedText() {
 		flagsPlaced.setText("Flags: " + minesweeperModel.flagsPlaced() + "/" +
-				DIFFICULTIES[difficulty][2]);
+				DIFFICULTY_VALUES[difficulty][2]);
 	}
 	
 	//this class represents the toggle button for flagging
 	private class FlagToggle extends JButton {
 		private boolean toggled;
 		private final Color TOGGLED_COLOR = Color.GREEN;
-		private final int ICON_HEIGHT = 16;
+		private final int ICON_HEIGHT = 16; //TODO: fix random 16
 		
 		/**
 		 * initializes the button with the given text
@@ -135,7 +139,7 @@ public class MinesweeperFrame extends JFrame {
 		 */
 		public FlagToggle(String text) {
 			super(text);
-			setIcon(scaledIcon(FLAG_ICON, null, ICON_HEIGHT)); //TODO: fix random 16
+			setIcon(scaledIcon(FLAG_ICON, null, ICON_HEIGHT));
 			addActionListener(e -> {
 				toggled = !toggled;
 				if(toggled) {
@@ -165,7 +169,7 @@ public class MinesweeperFrame extends JFrame {
 		 * constructs a spot representing the row/column location on the grid
 		 * 
 		 * @param row The row value of the spot
-		 * @param col The col value of the spot
+		 * @param col The column value of the spot
 		 */
 		public GridSpot(int row, int col) {
 			setOpaque(true);
@@ -176,7 +180,7 @@ public class MinesweeperFrame extends JFrame {
 			addActionListener(e -> {
 				if(!minesweeperModel.isGameOver()) {
 					if(placeFlag.isToggled()) {
-						if(minesweeperModel.flagsPlaced() < DIFFICULTIES[difficulty][2]) {
+						if(minesweeperModel.flagsPlaced() < DIFFICULTY_VALUES[difficulty][2]) {
 							if(minesweeperModel.spotIsFlagged(row, col)) {
 								minesweeperModel.unflagSpot(row, col);
 								setIcon(null);
@@ -186,7 +190,6 @@ public class MinesweeperFrame extends JFrame {
 							}
 						}
 					} else if(minesweeperModel.spotCanBeRevealed(row, col)){
-						//setEnabled(false); TODO it's changing the font color
 						Map<Integer[], Integer> affectedSpots = minesweeperModel.revealSpot(row, col);
 						if(affectedSpots == null) {
 							gameOverActions();
