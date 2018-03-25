@@ -17,7 +17,7 @@ public class MinesweeperFrame extends JFrame {
 	private final ImageIcon FLAG_ICON;
 	private final ImageIcon MINE_ICON;
 	private static final Color[] GAME_COLORS = {Color.BLUE, Color.WHITE};
-	private static final int[][] DIFFICULTY_VALUES = {{10, 10, 10}, {16, 16, 40}, {30, 16, 99}};
+	private static final int[][] DIFFICULTY_VALUES = {{10, 10, 10}, {16, 16, 40}, {16, 30, 99}};
 	
 	/**
 	 * initializes the frame
