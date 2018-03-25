@@ -18,6 +18,7 @@ public class MinesweeperFrame extends JFrame {
 	private final ImageIcon MINE_ICON;
 	private static final Color[] GAME_COLORS = {Color.BLUE, Color.WHITE};
 	private static final int[][] DIFFICULTY_VALUES = {{10, 10, 10}, {16, 16, 40}, {16, 30, 99}};
+	private static final String[] DIFFICULTIES = {"EASY", "MEDIUM", "HARD"};
 	
 	/**
 	 * initializes the frame
@@ -27,12 +28,25 @@ public class MinesweeperFrame extends JFrame {
 		MINE_ICON = new ImageIcon(getClass().getResource("/images/mine_icon.png"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setMinimumSize(new Dimension(1024, 768));
+//		setExtendedState(MAXIMIZED_BOTH);
 		setTitle("Minesweeper");
+
+		JPanel buttonPanel = new JPanel();
+		add(new JScrollPane(buttonPanel));
+		setupMenu();
+		setVisible(true);
+		
+		int response = JOptionPane.showOptionDialog(this, "Choose a difficulty:", "Difficulty Selection",
+				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, DIFFICULTIES, 
+				DIFFICULTIES[0]);
+		if(response < 0) {
+			response = 0;
+		}
+		difficulty = response;
 		minesweeperModel = new MinesweeperModel(DIFFICULTY_VALUES[difficulty][0],
 				DIFFICULTY_VALUES[difficulty][1], DIFFICULTY_VALUES[difficulty][2]);
-		
+
 		gridSpots = new GridSpot[DIFFICULTY_VALUES[difficulty][0]][DIFFICULTY_VALUES[difficulty][1]];
-		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new GridLayout(gridSpots.length, gridSpots[0].length));
 		for(int r = 0; r < gridSpots.length; r++) {
 			for(int c = 0; c < gridSpots[0].length; c++) {
@@ -40,8 +54,8 @@ public class MinesweeperFrame extends JFrame {
 				buttonPanel.add(gridSpots[r][c]);
 			}
 		}
-		add(buttonPanel);
-		setupMenu();		
+		setFlagsPlacedText();
+		getRootPane().repaint();
 	}
 	
 	//sets up the menu bar with the flag button, flag tally, and help button
@@ -53,7 +67,6 @@ public class MinesweeperFrame extends JFrame {
 		menu.add(Box.createHorizontalGlue());
 		
 		flagsPlaced = new JLabel();
-		setFlagsPlacedText();
 		menu.add(flagsPlaced);
 		menu.add(Box.createHorizontalGlue());
 		
@@ -164,6 +177,8 @@ public class MinesweeperFrame extends JFrame {
 	private class GridSpot extends JButton {
 		private static final int FONT_SIZE = 40;
 		private static final String FONT_NAME = "Arial";
+		private static final int HEIGHT = 76;
+		private static final int WIDTH = 100;
 		
 		/**
 		 * constructs a spot representing the row/column location on the grid
@@ -176,6 +191,7 @@ public class MinesweeperFrame extends JFrame {
 			setRolloverEnabled(false);
 			setForeground(GAME_COLORS[1]);
 			setFont(new Font(FONT_NAME, Font.PLAIN, FONT_SIZE));
+			setPreferredSize(new Dimension(WIDTH, HEIGHT));
 			
 			addActionListener(e -> {
 				if(!minesweeperModel.isGameOver()) {
