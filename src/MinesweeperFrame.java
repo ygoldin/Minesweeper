@@ -36,13 +36,7 @@ public class MinesweeperFrame extends JFrame {
 		setupMenu();
 		setVisible(true);
 		
-		int response = JOptionPane.showOptionDialog(this, "Choose a difficulty:", "Difficulty Selection",
-				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, DIFFICULTIES, 
-				DIFFICULTIES[0]);
-		if(response < 0) {
-			response = 0;
-		}
-		difficulty = response;
+		pickDifficulty();
 		minesweeperModel = new MinesweeperModel(DIFFICULTY_VALUES[difficulty][0],
 				DIFFICULTY_VALUES[difficulty][1], DIFFICULTY_VALUES[difficulty][2]);
 
@@ -93,6 +87,17 @@ public class MinesweeperFrame extends JFrame {
 			}
 			curSpot.setBackground(GAME_COLORS[0]);
 		}
+	}
+	
+	//lets the user pick a difficulty
+	private void pickDifficulty() {
+		int response = JOptionPane.showOptionDialog(this, "Choose a difficulty:", "Difficulty Selection",
+				JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, DIFFICULTIES, 
+				DIFFICULTIES[0]);
+		if(response < 0) {
+			response = 0;
+		}
+		difficulty = response;
 	}
 	
 	//performs the end of game actions, including resetting the game if necessary
